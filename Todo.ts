@@ -1,5 +1,5 @@
 enum State{
-    QUEUE="queue",
+    START="start",
     DONE="done",
     CANCEL="cancel",
     TOP_LIST="topList"
@@ -16,6 +16,10 @@ type createTodoDTO = {
     state: State
 }
 
+type ResponseMethod = {
+    message: string
+}
+
 interface ITodo{
     createTodo(todo : createTodoDTO): void;
     deleteTodo(id: number): void;
@@ -24,9 +28,9 @@ interface ITodo{
 }
 
 abstract class  TodoRepository implements ITodo {
-    protected Todo : [];
+    protected Todos : Todo[];
     constructor(){
-        this.Todo = [];
+        this.Todos = [];
     }
 
     public createTodo(todo: createTodoDTO): void {
@@ -49,10 +53,17 @@ class TodoController extends TodoRepository{
         super()
     }
 
-    public createTodo(todo: createTodoDTO): any {
-        return {NewTodo: "created"}
+    public createTodo(todo: createTodoDTO): ResponseMethod {
+        const id = this.Todos.length+1
+        let newTodo: Todo ={
+            id,
+            title: todo.title,
+            state: todo.state
+        } 
+        this.Todos.push(newTodo)
+        return {message: "created"}
     }
 }
 
 const todo = new TodoController();
-console.log(todo.createTodo({title: "work" , state: State.QUEUE}));
+console.log(todo.createTodo({title: "work" , state: State.START}));
